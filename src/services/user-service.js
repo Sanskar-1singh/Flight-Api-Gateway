@@ -44,8 +44,33 @@ async function signin(data){
      }
 }
 
+  async function isAuthenticated(token){
+       try {
+         if(!token){
+            throw new AppError('Missing JWT token',StatusCodes.BAD_REQUEST);
+         }
+         const response=Auth.verifyToken(token);
 
+         const user=await userRepository.get(response.id);
+         if(!user){//because sequelize return null if no user is found>>
+            throw new AppError('No user found',StatusCodes.BAD_REQUEST);
+         }
+         return user.id;
+       } catch (error) {
+        //error is object and we are checking whether it is object of AppError class>>
+        //always remember any error thrown from anywhere will always get catch in CATCH block>>
+        if(error instanceof AppError) throw error; //because the error try block throw such as  throw new AppError('No user found',StatusCodes.BAD_REQUEST);
+                                                  //will get catch in catch block and then if it is instance of app error then we will throw that error as it is 
+                                                //instead of treating as other error>>>
+           if(error.name=='JsonWebTokenError'){
+            throw new AppError('Invalid JWT token',StatusCodes.BAD_REQUEST);
+           }
+           console.log(error);
+           throw error;
+       }
+  }
 module.exports={
     create,
-    signin
+    signin,
+    isAuthenticated
 }

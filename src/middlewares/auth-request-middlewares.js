@@ -2,6 +2,7 @@ const {StatusCodes}=require('http-status-codes');
 
 const {ErrorResponse}=require('../utils/common');
 const AppError = require('../utils/errors/app-error');
+const UserService=require('../services/user-service');
 
 function validateAuthRequest(req,res,next){
     if(!req.body.email){
@@ -18,6 +19,19 @@ function validateAuthRequest(req,res,next){
     }
     next();
 }
+
+async function checkAuth(req,res,next){
+    try {
+         const response= await UserService.isAuthenticated(req.headers['x-access-token']);
+           if(response){
+            req.user=response;//setting userid in the request object;
+            next();
+           }
+    } catch (error) {
+        return res.status(error.statusCode || StatusCodes.BAD_REQUEST).json(error);
+    }
+}
 module.exports={
-    validateAuthRequest
+    validateAuthRequest,
+    checkAuth
 }
