@@ -20,19 +20,8 @@ const limiter=rateLimit({
 
 app.use(limiter);
 
-app.use('/flightsService',createProxyMiddleware({target:'http://localhost:3000/',changeOrigin:true}));
-app.use('/bookingsService', createProxyMiddleware({
-    target: 'http://localhost:4000/',
-    changeOrigin: true,
-    onProxyReq: (proxyReq, req, res) => {
-        if (req.body) {
-            let bodyData = JSON.stringify(req.body);
-            proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData));
-            proxyReq.setHeader('Content-Type', 'application/json');
-            proxyReq.write(bodyData);
-        }
-    }
-}));
+app.use('/flightsService',createProxyMiddleware({target:'http://localhost:3000',changeOrigin:true}));
+app.use('/bookingsService',createProxyMiddleware({target:'http://localhost:4000',changeOrigin:true}))
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));   
