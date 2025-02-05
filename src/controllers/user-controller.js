@@ -30,7 +30,22 @@ async function signin(req,res){
         return res.status(error.statusCode || StatusCodes.BAD_REQUEST).json(ErrorResponse);
     }
 }
+
+async function addRoletoUser(req,res){
+    try {
+        const user=await UserService.addRoletoUser({
+            role:req.body.role,
+            id:req.body.id
+        });
+        SuccessResponse.data=user;
+        return res.status(StatusCodes.CREATED).json(SuccessResponse);
+    } catch (error) {
+        ErrorResponse.error=error;
+        return res.status(error.statusCode || StatusCodes.BAD_REQUEST).json(ErrorResponse);
+    }
+}
 module.exports={
     signup,
-    signin
+    signin,
+    addRoletoUser
 }
