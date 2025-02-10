@@ -98,7 +98,7 @@ async function signin(data){
     }
   }
 
-/**
+/**  all the below mention statment belong to isAdmin(id) function>>>>>
  * first user will siginin causes  this is auth protected api and then it will check even signedin user is admin
  * or not if not then it will directly throw error and of it is admin then it will mark the given id and role to that
  * user and make brand new entry in user_roles table because a user can be purse more than one thing at a time

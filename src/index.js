@@ -6,6 +6,7 @@ const {Logger}=require('./config');
 const rateLimit=require('express-rate-limit');
 const {createProxyMiddleware}=require('http-proxy-middleware');
 const app = express();
+const {AuthMiddlewares}=require('./middlewares');
 
 const limiter=rateLimit({
     windowMs:2*60*1000, //2 minutes
@@ -20,8 +21,8 @@ const limiter=rateLimit({
 
 app.use(limiter);
 
-app.use('/flightsService',createProxyMiddleware({target:'http://localhost:3000',changeOrigin:true}));
-app.use('/bookingsService',createProxyMiddleware({target:'http://localhost:4000',changeOrigin:true}))
+app.use('/flightsService',AuthMiddlewares.checkAuth,createProxyMiddleware({target:'http://localhost:3000',changeOrigin:true}));
+app.use('/bookingsService',AuthMiddlewares.checkAuth,createProxyMiddleware({target:'http://localhost:4000',changeOrigin:true}))
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));   
